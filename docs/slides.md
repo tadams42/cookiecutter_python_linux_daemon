@@ -117,5 +117,5 @@ layout: false
 
 - You will not have to learn all the intricate ways Python packaging breaks Zen of Python
 
-- at least not every time you are starting new
+- at least not every time you are starting new application
 ]
