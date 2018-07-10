@@ -1,0 +1,18 @@
+{
+  "project_name": "Project",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+  "project_domain": "{{cookiecutter.project_slug}}.example.com",
+  "author_name": "First Last",
+  "author_email": "{{ cookiecutter.author_name.lower().replace(' ', '_').replace('-', '_').replace('_', '') }}@example.com",
+  "version": "0.0.1",
+  "project_description": "Simple Python daemon application.",
+  "license": [
+    "License :: Other/Proprietary License",
+    "License :: OSI Approved :: BSD License",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "License :: OSI Approved :: MIT License"
+  ]
+}

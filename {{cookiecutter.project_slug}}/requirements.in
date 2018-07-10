@@ -1,0 +1,19 @@
+# pip install -U pip pip-tools wheel
+# pip-compile requirements.in
+
+ipython
+
+# Change name of running Python process/thread for prettier top/htop display
+python-prctl
+
+# Some common misc functions like is_blank, Stopwatch, etc...
+seveno_pyutil
+
+# Generic proxy classes
+objproxies
+
+# YAML reader/writer
+pyyaml
+
+click
+click-help-colors
