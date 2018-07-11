@@ -12,8 +12,6 @@ cookiecutter template for simple Python 3 Linux daemon application.
 
 ## Docs
 
-Check the pretty [slides](https://tadams42.github.io/cookiecutter_python_linux_daemon/)
-
 ## Use it
 
 ~~~sh
