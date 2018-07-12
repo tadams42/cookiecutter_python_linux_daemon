@@ -181,7 +181,6 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
     'seveno_pyutil': ('https://seveno-pyutil.readthedocs.io/en/latest/', None),
-    'confluent_kafka': ('https://docs.confluent.io/current/clients/confluent-kafka-python/', None)
 }
 
 # -- Options for todo extension ----------------------------------------------
