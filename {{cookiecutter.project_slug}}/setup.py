@@ -106,7 +106,12 @@ setup(
             '{{cookiecutter.project_slug}} = {{cookiecutter.project_slug}}.scripts:cli',
         ]
     },
-    # scripts=[
-    #     'bin/example_installable_script.sh'
-    # ]
+    scripts=[
+        os.path.join('bin', os.path.basename(file_path))
+        for file_path in glob('bin/*')
+        if os.path.isfile(file_path) and (
+            # Only include scripts executable by owner
+            os.stat(file_path).st_mode & stat.S_IXUSR
+        )
+    ]
 )

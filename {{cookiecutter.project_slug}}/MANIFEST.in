@@ -2,7 +2,7 @@ prune docs
 prune tests
 prune log
 prune config
-prune bin
+graft bin
 
 graft src/{{cookiecutter.project_slug}}/resources
 
