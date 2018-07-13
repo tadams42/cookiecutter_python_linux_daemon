@@ -71,11 +71,12 @@ class Server:
         sys.exit(0)
 
 
-def create_app(args):
+def create_app(command_line_arguments):
     """
     `.Server` factory.
 
     Arguments:
-        args(collections.NamedTuple): parsed command line arguments.
+        command_line_arguments(collections.NamedTuple): parsed command line
+            arguments.
     """
-    return Server(args.environment, args)
+    return Server(command_line_arguments.environment, command_line_arguments)
