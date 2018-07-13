@@ -33,7 +33,6 @@ To generate and view very pretty docs:
 
 ~~~sh
 source .venv/bin/activate
-cd docs
 python setup.py build_sphinx
 google-chrome build/sphinx/html/index.html
 ~~~
