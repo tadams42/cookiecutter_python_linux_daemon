@@ -11,6 +11,7 @@ from __future__ import absolute_import, print_function
 import io
 import os
 import re
+import stat
 from glob import glob
 from os.path import basename, dirname, join, splitext
 
