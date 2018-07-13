@@ -5,17 +5,17 @@ App settings module providing access to global config singleton object.
 from objproxies import CallbackProxy
 from seveno_pyutil import silent_remove
 
-from .development import Development
+from .development_config_loader import DevelopmentConfigLoader
 from .external_config_loader import (ExternalConfigLoader,
                                      ImproperlyConfiguredError)
-from .production import Production
-from .test import Test
+from .production_config_loader import ProductionConfigLoader
+from .test_config_loader import TestConfigLoader
 
 #: Available app runtime environment types.
 ENVIRONMENTS = {
-    'development': Development,
-    'test': Test,
-    'production': Production
+    'development': DevelopmentConfigLoader,
+    'test': TestConfigLoader,
+    'production': ProductionConfigLoader
 }
 
 # Global config object instance

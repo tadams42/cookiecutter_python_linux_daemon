@@ -7,7 +7,7 @@ from pkg_resources import Requirement, resource_filename
 from {{cookiecutter.project_slug}}.settings import ENVIRONMENTS, ImproperlyConfiguredError
 
 
-class DescribeDevelopment:
+class DescribeDevelopmentConfigLoader:
     def it_resolves_to_correct_default_config_paths(self):
         cfg = ENVIRONMENTS['development']()
         # Prevent logging config from loading
@@ -94,7 +94,7 @@ class DescribeDevelopment:
             cfg.filelog_abspath
 
 
-class DescribeTest:
+class DescribeTestConfigLoader:
 
     def it_resolves_to_correct_default_config_paths(self):
         cfg = ENVIRONMENTS['test']()
@@ -182,7 +182,7 @@ class DescribeTest:
             cfg.filelog_abspath
 
 
-class DescribeProduction:
+class DescribeProductionConfigLoader:
     def it_resolves_to_correct_default_config_paths(self, mocker):
         cfg = ENVIRONMENTS['production']()
         # Prevent logging config from loading

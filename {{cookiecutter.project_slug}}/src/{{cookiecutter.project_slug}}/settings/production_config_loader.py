@@ -5,7 +5,7 @@ from seveno_pyutil import abspath_if_relative, is_blank
 from .external_config_loader import ExternalConfigLoader
 
 
-class Production(ExternalConfigLoader):
+class ProductionConfigLoader(ExternalConfigLoader):
     """
     External config file loader for ``production`` mode of operation.
 

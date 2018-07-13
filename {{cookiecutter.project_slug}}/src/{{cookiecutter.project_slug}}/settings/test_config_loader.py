@@ -7,7 +7,7 @@ from .external_config_loader import (ExternalConfigLoader,
                                      ImproperlyConfiguredError)
 
 
-class Test(ExternalConfigLoader):
+class TestConfigLoader(ExternalConfigLoader):
     """
     External config file loader for ``test`` mode of operation.
 

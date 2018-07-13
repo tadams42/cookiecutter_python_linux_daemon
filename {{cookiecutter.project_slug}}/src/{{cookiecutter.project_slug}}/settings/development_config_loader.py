@@ -7,7 +7,7 @@ from .external_config_loader import (ExternalConfigLoader,
                                      ImproperlyConfiguredError)
 
 
-class Development(ExternalConfigLoader):
+class DevelopmentConfigLoader(ExternalConfigLoader):
     """
     External config file loader for ``development`` mode of operation.
 
