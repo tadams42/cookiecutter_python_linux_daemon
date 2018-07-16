@@ -10,16 +10,21 @@ _SELF_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 @pytest.fixture(scope="session", autouse=True)
-def app(request, scope="session"):
+def app(request):
     """
-    Instance of Server. It doesn't start it, but creating it necessary for all
-    app contexts initializations (ie. config is loaded and available through
-    SETTINGS after this fixture).
+    Instance of test `Server`.
+
+    This fixture doesn't start server, but creating (at least one) instance
+    for test session is necessary so that app config is loaded and app
+    environment is initialized.
     """
     app = Server("test")
+
+    app.before_startup()
 
     def fin():
         app.before_shutdown()
 
     request.addfinalizer(fin)
+
     return app

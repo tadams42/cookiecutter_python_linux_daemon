@@ -4,8 +4,8 @@ import os
 import tempfile
 import uuid
 from abc import ABC, abstractmethod
-from logging.config import dictConfig
 from collections import namedtuple
+from logging.config import dictConfig
 from typing import List, NamedTuple
 
 import yaml
