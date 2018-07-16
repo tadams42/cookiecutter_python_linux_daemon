@@ -41,7 +41,7 @@ class Server:
         for signame in ('SIGINT', 'SIGTERM', 'SIGHUP', 'SIGQUIT'):
             signal.signal(
                 getattr(signal, signame),
-                lambda signum, frame: self.shutdown(signum)
+                lambda signum, frame: self.shutdown(signame)
             )
 
         self.before_startup()
@@ -71,12 +71,12 @@ class Server:
         sys.exit(0)
 
 
-def create_app(command_line_arguments):
+def create_app(cmdline_args):
     """
     `.Server` factory.
 
     Arguments:
-        command_line_arguments(collections.NamedTuple): parsed command line
+        cmdline_args(collections.NamedTuple): parsed command line
             arguments.
     """
-    return Server(command_line_arguments.environment, command_line_arguments)
+    return Server(cmdline_args.environment, cmdline_args)

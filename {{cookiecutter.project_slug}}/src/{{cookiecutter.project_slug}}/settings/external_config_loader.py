@@ -5,6 +5,7 @@ import tempfile
 import uuid
 from abc import ABC, abstractmethod
 from logging.config import dictConfig
+from collections import namedtuple
 from typing import List, NamedTuple
 
 import yaml
@@ -19,6 +20,7 @@ _SETUP_PY_PATH = os.path.abspath(
 
 
 class ImproperlyConfiguredError(RuntimeError):
+
     pass
 
 
@@ -43,10 +45,6 @@ class ExternalConfigLoader(ABC):
 
     Arguments:
         cmdline_args: Command line arguments.
-
-    Attributes:
-        XDG_CONFIG_HOME: https://specifications.freedesktop.org/basedir-spec/latest/
-        XDG_CONFIG_HOME: https://specifications.freedesktop.org/basedir-spec/latest/
     """
 
     #: Base name of application process. This name will be used to construct
@@ -54,48 +52,68 @@ class ExternalConfigLoader(ABC):
     #: logs, top, ...)
     APPLICATION_NAME = '{{cookiecutter.project_slug}}'
 
+    #: UUID of currently running app server.
+    #: Used to distinguish different app instances running on the same machine
+    #: at the same time
     APPLICATION_INSTANCE_UUID = uuid.uuid4()
 
+    #: Resolved value of $XDG_CONFIG_HOME (from https://specifications.freedesktop.org/basedir-spec/latest/)
     XDG_CONFIG_HOME = (
         os.path.join(os.environ.get('XDG_CONFIG_HOME'), APPLICATION_NAME)
         if os.environ.get('XDG_CONFIG_HOME') else None
     ) or os.path.join(current_user_home(), '.config', APPLICATION_NAME)
 
+    #: Resolved value of $XDG_DATA_HOME (from https://specifications.freedesktop.org/basedir-spec/latest/)
     XDG_DATA_HOME = (
         os.path.join(os.environ.get('XDG_DATA_HOME'), APPLICATION_NAME)
         if os.environ.get('XDG_DATA_HOME') else None
     ) or os.path.join(current_user_home(), '.local', 'share', APPLICATION_NAME)
 
+    #: Default tmp directory app will use if no config override is provided.
     DEFAULT_TEMP_DIR = os.path.join(tempfile.gettempdir(), '{{cookiecutter.project_slug}}.tmp')
 
+    #: Root directory of application source code repo. Note that if we are
+    #: running from within installed package this value will not point to
+    #: anyhing meaningfull (see _IS_RUNNING_FROM_SOURCE)
     _REPO_ROOT = os.path.dirname(_SETUP_PY_PATH)
+
+    #: Boolean signalling if currently running app server was started from
+    #: within source code repo or from within pip installed package.
     _IS_RUNNING_FROM_SOURCE = os.path.isfile(_SETUP_PY_PATH)
+
+    #: Override this in subclass if you want logging config to force
+    #: one line of text per log event. Final effect of this is that new lines
+    #: will be escaped in logs. Useful in production environments, less usefull
+    #: in development environments.
+    _FORCE_SINGLE_LINE_LOGS = True
+
+    #: Override this in syslog if you want to force logging config to never
+    #: configure syslog logging sink. This is usefull for development
+    #: environments so we don't spam syslog no matter how does example
+    #: logging_config.json look like.
+    _FORCE_DISABLE_SYSLOG = False
 
     def __init__(self, cmdline_args: NamedTuple = None):
         self._errors = None
-        self.cmdline_args = cmdline_args
+        self.cmdline_args = cmdline_args or namedtuple('CmdArguments', [])()
         self._logging_json = None
-        self.app_config = {}
+        self.app_config = {}    #: `dict` for contents of external config file(s)
 
     @property
     def instance_name(self) -> str:
-        """
-        Instance name is what is visible in logs and top/htop as process name.
+        """Instance name is visible in logs and top/htop as process name.
 
-        It is constructed from static APPLICATION_NAME and  dynamic
-        PROCESS_NAME_SUFFIX which is read from commandline argument.
+        It is constructed from static value of APPLICATION_NAME and value of
+        command line argument ``--process-name-suffix``.
         """
         return self.APPLICATION_NAME + (
-            getattr(self.cmdline_args, 'process_name_suffix', '').strip()
-            if not is_blank(
-                getattr(self.cmdline_args, 'process_name_suffix', None)
-            )
-            else ''
-        )
+            getattr(self.cmdline_args, 'process_name_suffix', '') or ''
+        ).strip()
 
     @property
-    def dry_run(self) -> bool:
-        return getattr(getattr(self, 'cmdline_args', None), 'dry_run', False)
+    def is_dry_run(self) -> bool:
+        """State of ``--dry-run`` command line argument"""
+        return getattr(self.cmdline_args, 'dry_run', False)
 
     @property
     def instance_tmp_dir_path(self) -> str:
@@ -104,7 +122,8 @@ class ExternalConfigLoader(ABC):
         config or we query OS for it.
         """
         base_path = (
-            (self.app_config or {}).get('tmp_dir_path') or self.DEFAULT_TEMP_DIR
+            (self.app_config or {}).get('tmp_dir_path')
+            or self.DEFAULT_TEMP_DIR
         )
         return os.path.abspath(os.path.join(
             base_path, self.instance_name, self.APPLICATION_INSTANCE_UUID.hex
@@ -135,7 +154,6 @@ class ExternalConfigLoader(ABC):
     def logging_json(self) -> dict:
         """
         Loaded and fully resolved logging config dict.
-
         """
         if not self._logging_json:
             self._load_logging_config()
@@ -153,7 +171,7 @@ class ExternalConfigLoader(ABC):
                 )
 
                 if (
-                    not self.FORCE_SINGLE_LINE_LOGS
+                    not self._FORCE_SINGLE_LINE_LOGS
                     and 'SingleLine' in formatter.get('()', '')
                 ):
                     if 'Color' in formatter.get('()', ''):
@@ -162,7 +180,7 @@ class ExternalConfigLoader(ABC):
                         del formatter['()']
 
             for logger_cfg in self._logging_json['loggers'].values():
-                if not self.ENABLE_SYSLOG:
+                if self._FORCE_DISABLE_SYSLOG:
                     if 'handlers' in logger_cfg:
                         logger_cfg['handlers'] = [
                             handler for handler in logger_cfg['handlers']
@@ -190,6 +208,7 @@ class ExternalConfigLoader(ABC):
                 self._logging_json = json.load(f)
 
     def load_and_validate(self):
+        """Loads and validates external app config."""
         self.app_config = {}
         errors = {}
 
@@ -228,7 +247,17 @@ class ExternalConfigLoader(ABC):
         logger = logging.getLogger(__name__)
         logger.debug(
             "Initialized and resolved config for %s: %s",
-            self.instance_name, self.as_json
+            self.instance_name, json.dumps({
+                'instance_name': self.instance_name,
+                'instance_uuid': str(self.APPLICATION_INSTANCE_UUID),
+                'config_files': self.config_file_abspaths,
+                'app_config': self.app_config,
+                'logging_json': self.logging_json,
+                'cmdline_args': (
+                    self.cmdline_args._asdict() if self.cmdline_args else None
+                ),
+                'tmp_dir': self.instance_tmp_dir_path
+            })
         )
         if self._is_filelog_enabled:
             logger.debug("Logging to: %s", self.filelog_abspath)
@@ -236,20 +265,6 @@ class ExternalConfigLoader(ABC):
             logger.debug(
                 "Was not configured to log to file, check syslog instead..."
             )
-
-    @property
-    def as_json(self) -> str:
-        return json.dumps({
-            'instance_name': self.instance_name,
-            'instance_uuid': str(self.APPLICATION_INSTANCE_UUID),
-            'config_files': self.config_file_abspaths,
-            'app_config': self.app_config,
-            'logging_json': self.logging_json,
-            'cmdline_args': (
-                self.cmdline_args._asdict() if self.cmdline_args else None
-            ),
-            'tmp_dir': self.instance_tmp_dir_path
-        })
 
     @property
     def _is_filelog_enabled(self) -> bool:

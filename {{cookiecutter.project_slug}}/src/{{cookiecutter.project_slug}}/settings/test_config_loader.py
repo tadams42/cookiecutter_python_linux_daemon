@@ -8,19 +8,19 @@ from .external_config_loader import (ExternalConfigLoader,
 
 
 class TestConfigLoader(ExternalConfigLoader):
-    """
-    External config file loader for ``test`` mode of operation.
+    """External config file loader for ``test`` mode of operation.
 
-    In this mode, config is never loaded from system wide locations. This is to
-    prevent automatic loading of production config when starting application in
-    test mode.
+    In this mode:
 
-    Command line arguments for ``--config-file-path``, ``--log-file-path``
-    and ``--logging-config-path`` don't allow relative paths and will rise
-    exception in this mode of operation. Resolving relative path from
-    installed package is only possible by considering it relative to
-    systemwide locations, and as stated before, automatic use of systemwide
-    config files in test mode is dangerous and thus prevented.
+    - config is never loaded from system wide locations (to prevent automatic
+      loading of production config when starting application in test
+      mode)
+    - command line arguments for ``--config-file-path``, ``--log-file-path``
+      and ``--logging-config-path`` don't allow relative paths and will rise
+      exception in this mode of operation. Resolving relative path from
+      within installed package is only possible by considering it relative to
+      systemwide locations. since automatic use of systemwide config files in
+      test mode is dangerous this is prevented but stated exception.
 
     **Config and log file locations**
 
@@ -38,14 +38,14 @@ class TestConfigLoader(ExternalConfigLoader):
         - value of ``--log-file-path`` if provided and is absolute path
         - ``log/test.log`` if running from inside repo
         - ``/tmp/{{cookiecutter.project_slug}}.tmp/test.log`` if running from
-          installed package
+          install
     """
 
     DEBUG = True
     TESTING = True
 
-    FORCE_SINGLE_LINE_LOGS = False
-    ENABLE_SYSLOG = False
+    _FORCE_SINGLE_LINE_LOGS = False
+    _FORCE_DISABLE_SYSLOG = True
 
     @property
     def filelog_abspath(self):

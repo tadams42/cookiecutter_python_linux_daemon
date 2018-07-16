@@ -8,19 +8,19 @@ from .external_config_loader import (ExternalConfigLoader,
 
 
 class DevelopmentConfigLoader(ExternalConfigLoader):
-    """
-    External config file loader for ``development`` mode of operation.
+    """External config file loader for ``development`` mode of operation.
 
-    In this mode, config is never loaded from system wide locations. This is to
-    prevent automatic loading of production config when starting application in
-    development mode.
+    In this mode:
 
-    Command line arguments for ``--config-file-path``, ``--log-file-path``
-    and ``--logging-config-path`` don't allow relative paths and will rise
-    exception in this mode of operation. Resolving relative path from
-    installed package is only possible by considering it relative to
-    systemwide locations, and as stated before, automatic use of systemwide
-    config files in development mode is dangerous and thus prevented.
+    - config is never loaded from system wide locations (to prevent automatic
+      loading of production config when starting application in development
+      mode)
+    - command line arguments for ``--config-file-path``, ``--log-file-path``
+      and ``--logging-config-path`` don't allow relative paths and will rise
+      exception in this mode of operation. Resolving relative path from
+      within installed package is only possible by considering it relative to
+      systemwide locations. since automatic use of systemwide config files in
+      development mode is dangerous this is prevented but stated exception.
 
     **Config and log file locations**
 
@@ -44,8 +44,8 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
     DEBUG = True
     TESTING = False
 
-    FORCE_SINGLE_LINE_LOGS = False
-    ENABLE_SYSLOG = False
+    _FORCE_SINGLE_LINE_LOGS = False
+    _FORCE_DISABLE_SYSLOG = True
 
     @property
     def filelog_abspath(self):

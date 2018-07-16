@@ -6,12 +6,11 @@ from .external_config_loader import ExternalConfigLoader
 
 
 class ProductionConfigLoader(ExternalConfigLoader):
-    """
-    External config file loader for ``production`` mode of operation.
+    """External config file loader for ``production`` mode of operation.
 
     In this mode of operation, application loads configuration in standard
-    Linux way trying first at ``/etc``, then in ``$XDG_CONFIG_HOME``, etc...
-    Config files are loaded from multiple locations, and values loaded from
+    Linux way trying first at ``/etc``, then in ``$XDG_CONFIG_HOME``. Config
+    files are loaded from multiple locations, and values loaded from
     ``$XDG_CONFIG_HOME`` replace values loaded from ``/etc``.
 
     **Config and log file locations**
@@ -48,8 +47,8 @@ class ProductionConfigLoader(ExternalConfigLoader):
     DEBUG = False
     TESTING = False
 
-    FORCE_SINGLE_LINE_LOGS = True
-    ENABLE_SYSLOG = True
+    _FORCE_SINGLE_LINE_LOGS = True
+    _FORCE_DISABLE_SYSLOG = False
 
     @property
     def filelog_abspath(self):

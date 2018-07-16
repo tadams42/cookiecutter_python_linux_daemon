@@ -7,7 +7,7 @@
 For development machine run:
 
 ~~~sh
-sudo apt install python3-dev python3-venv libcap-de
+sudo apt install python3-dev python3-venv libcap-dev
 
 python3 -mvenv .venv
 source .venv/bin/activate
