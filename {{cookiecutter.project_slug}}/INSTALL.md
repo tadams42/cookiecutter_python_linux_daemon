@@ -119,7 +119,7 @@ The simplest way to demonize application is to use `supervisord` with following 
 
 ~~~ini
 [{{cookiecutter.project_slug}}]
-user=m3p
-directory=/home/m3p/{{cookiecutter.project_slug}}
+user=some_user
+directory=/home/some_user/{{cookiecutter.project_slug}}
 command=.venv/bin/{{cookiecutter.project_slug}} runserver --environment production
 ~~~
