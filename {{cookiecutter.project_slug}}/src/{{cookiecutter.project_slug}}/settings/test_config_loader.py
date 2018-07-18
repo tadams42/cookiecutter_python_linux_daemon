@@ -38,7 +38,7 @@ class TestConfigLoader(ExternalConfigLoader):
         - value of ``--log-file-path`` if provided and is absolute path
         - ``log/test.log`` if running from inside repo
         - ``/tmp/{{cookiecutter.project_slug}}.tmp/test.log`` if running from
-          install
+          installed package
     """
 
     DEBUG = True

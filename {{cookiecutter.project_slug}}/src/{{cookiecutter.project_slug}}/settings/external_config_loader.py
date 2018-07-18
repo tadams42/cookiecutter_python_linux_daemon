@@ -99,6 +99,9 @@ class ExternalConfigLoader(ABC):
         self._logging_json = None
         self.app_config = {}    #: `dict` for contents of external config file(s)
 
+    def __getitem__(self, item):
+        return self.app_config[item]
+
     @property
     def instance_name(self) -> str:
         """Instance name is visible in logs and top/htop as process name.
