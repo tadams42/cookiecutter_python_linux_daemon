@@ -24,7 +24,7 @@ pip install --editable .[dev]
 
 For any sensible development, you'll also need a bunch of services running. Simplest way to make that happen is to use Docker:
 
-~~~
+~~~sh
 cd bin
 docker-compose up -d
 ~~~

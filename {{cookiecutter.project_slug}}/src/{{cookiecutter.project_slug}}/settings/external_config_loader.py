@@ -20,7 +20,6 @@ _SETUP_PY_PATH = os.path.abspath(
 
 
 class ImproperlyConfiguredError(RuntimeError):
-
     pass
 
 
