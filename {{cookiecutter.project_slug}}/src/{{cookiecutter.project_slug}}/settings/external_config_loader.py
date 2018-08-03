@@ -204,7 +204,7 @@ class ExternalConfigLoader(ABC):
 
         if not self._logging_json:
             with open(resource_filename(
-                Requirement("{{cookiecutter.project_slug}}"),
+                Requirement.parse("{{cookiecutter.project_slug}}"),
                 "{{cookiecutter.project_slug}}/resources/logging_config.json"
             ), 'r') as f:
                 self._logging_json = json.load(f)

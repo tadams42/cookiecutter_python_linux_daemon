@@ -89,7 +89,7 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
             )]
         else:
             return [resource_filename(
-                Requirement("{{cookiecutter.project_slug}}"),
+                Requirement.parse("{{cookiecutter.project_slug}}"),
                 "{{cookiecutter.project_slug}}/resources/logging_config.json"
             )]
 
@@ -112,7 +112,7 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
         else:
             return [
                 resource_filename(
-                    Requirement("{{cookiecutter.project_slug}}"),
+                    Requirement.parse("{{cookiecutter.project_slug}}"),
                     "{{cookiecutter.project_slug}}/resources/development.yaml"
                 )
             ]

@@ -27,7 +27,7 @@ class DescribeDevelopmentConfigLoader:
         cfg._IS_RUNNING_FROM_SOURCE = False
         assert cfg.config_file_abspaths == [
             resource_filename(
-                Requirement("{{cookiecutter.project_slug}}"),
+                Requirement.parse("{{cookiecutter.project_slug}}"),
                 "{{cookiecutter.project_slug}}/resources/development.yaml"
             )
         ]
@@ -35,7 +35,7 @@ class DescribeDevelopmentConfigLoader:
             cfg.DEFAULT_TEMP_DIR, "development.log"
         )
         assert cfg.logging_config_abspaths == [resource_filename(
-            Requirement("{{cookiecutter.project_slug}}"),
+            Requirement.parse("{{cookiecutter.project_slug}}"),
             "{{cookiecutter.project_slug}}/resources/logging_config.json"
         )]
 
@@ -115,7 +115,7 @@ class DescribeTestConfigLoader:
         cfg._IS_RUNNING_FROM_SOURCE = False
         assert cfg.config_file_abspaths == [
             resource_filename(
-                Requirement("{{cookiecutter.project_slug}}"),
+                Requirement.parse("{{cookiecutter.project_slug}}"),
                 "{{cookiecutter.project_slug}}/resources/test.yaml"
             )
         ]
@@ -123,7 +123,7 @@ class DescribeTestConfigLoader:
             cfg.DEFAULT_TEMP_DIR, "test.log"
         )
         assert cfg.logging_config_abspaths == [resource_filename(
-            Requirement("{{cookiecutter.project_slug}}"),
+            Requirement.parse("{{cookiecutter.project_slug}}"),
             "{{cookiecutter.project_slug}}/resources/logging_config.json"
         )]
 
@@ -314,7 +314,7 @@ class DescribeProductionConfigLoader:
         cfg = ENVIRONMENTS['production']()
 
         with open(resource_filename(
-            Requirement("{{cookiecutter.project_slug}}"),
+            Requirement.parse("{{cookiecutter.project_slug}}"),
             "{{cookiecutter.project_slug}}/resources/logging_config.json"
         ), 'r') as f:
             expected = json.load(f)
