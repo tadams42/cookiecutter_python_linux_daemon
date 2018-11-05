@@ -15,5 +15,15 @@ objproxies
 # YAML reader/writer
 pyyaml
 
+# improved JSON
+simplejson
+
+# cmdline interface
 click
 click-help-colors
+
+# Time and timezones stuff
+pytz
+python-dateutil
+tzlocal
+

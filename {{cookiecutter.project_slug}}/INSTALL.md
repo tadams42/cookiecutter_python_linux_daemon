@@ -92,8 +92,8 @@ Note that when installed like this, app no longer has access to `log/` and `conf
 
 In production mode, app expects and loads config files in following locations:
 
-* `/etc/{{cookiecutter.project_slug}}/app.yaml`
-* `$HOME/.config/{{cookiecutter.project_slug}}/app.yaml`
+* `/etc/{{cookiecutter.project_slug}}/production.yaml`
+* `$HOME/.config/{{cookiecutter.project_slug}}/production.yaml`
 * `{setup.py dir}/config/production.yaml`
 
 and logs to one of following locations:

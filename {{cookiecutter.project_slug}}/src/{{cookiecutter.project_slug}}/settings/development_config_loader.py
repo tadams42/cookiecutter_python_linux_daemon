@@ -3,24 +3,23 @@ import os
 from pkg_resources import Requirement, resource_filename
 from seveno_pyutil import is_blank
 
-from .external_config_loader import (ExternalConfigLoader,
-                                     ImproperlyConfiguredError)
+from .external_config_loader import ExternalConfigLoader, ImproperlyConfiguredError
 
 
 class DevelopmentConfigLoader(ExternalConfigLoader):
-    """External config file loader for ``development`` mode of operation.
+    """
+    External config file loader for ``development`` mode of operation.
 
     In this mode:
 
-    - config is never loaded from system wide locations (to prevent automatic
-      loading of production config when starting application in development
-      mode)
-    - command line arguments for ``--config-file-path``, ``--log-file-path``
-      and ``--logging-config-path`` don't allow relative paths and will rise
-      exception in this mode of operation. Resolving relative path from
-      within installed package is only possible by considering it relative to
-      systemwide locations. since automatic use of systemwide config files in
-      development mode is dangerous this is prevented but stated exception.
+    - config is never loaded from system wide locations (to prevent automatic loading
+      of production config when starting application in development mode)
+    - command line arguments for ``--config-file-path``, ``--log-file-path`` and
+      ``--logging-config-path`` don't allow relative paths and will rise exception in
+      this mode of operation. Resolving relative path from within installed package
+      is only possible by considering it relative to systemwide locations. since
+      automatic use of systemwide config files in development mode is dangerous this
+      is prevented but stated exception.
 
     **Config and log file locations**
 
@@ -37,8 +36,8 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
     - application log file path
         - value of ``--log-file-path`` if provided and is absolute path
         - ``log/development.log`` if running from inside repo
-        - ``/tmp/{{cookiecutter.project_slug}}.tmp/development.log`` if running from
-          installed package
+        - ``/tmp/{{cookiecutter.project_slug}}.tmp/development.log`` if running from installed
+          package
     """
 
     DEBUG = True
@@ -51,12 +50,9 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
     def filelog_abspath(self):
         self._load_logging_config()
 
-        non_default = (
-            getattr(self.cmdline_args, 'log_file_path', None)
-            or self.logging_json['handlers'].get('file', {}).get(
-                'filename', None
-            )
-        )
+        non_default = getattr(
+            self.cmdline_args, "log_file_path", None
+        ) or self.logging_json["handlers"].get("file", {}).get("filename", None)
 
         if not is_blank(non_default):
             if not os.path.isabs(non_default):
@@ -67,13 +63,13 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
             return non_default
 
         if self._IS_RUNNING_FROM_SOURCE:
-            return os.path.join(self._REPO_ROOT, "log", 'development.log')
+            return os.path.join(self._REPO_ROOT, "log", "development.log")
         else:
             return os.path.join(self.DEFAULT_TEMP_DIR, "development.log")
 
     @property
     def logging_config_abspaths(self):
-        cmdline = getattr(self.cmdline_args, 'logging_config_path', None)
+        cmdline = getattr(self.cmdline_args, "logging_config_path", None)
 
         if not is_blank(cmdline):
             if not os.path.isabs(cmdline):
@@ -84,18 +80,18 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
             return [cmdline]
 
         if self._IS_RUNNING_FROM_SOURCE:
-            return [os.path.join(
-                self._REPO_ROOT, "config", 'logging_config.json'
-            )]
+            return [os.path.join(self._REPO_ROOT, "config", "logging_config.json")]
         else:
-            return [resource_filename(
-                Requirement.parse("{{cookiecutter.project_slug}}"),
-                "{{cookiecutter.project_slug}}/resources/logging_config.json"
-            )]
+            return [
+                resource_filename(
+                    Requirement("{{cookiecutter.project_slug}}"),
+                    "{{cookiecutter.project_slug}}/resources/logging_config.json",
+                )
+            ]
 
     @property
     def config_file_abspaths(self):
-        cmdline = getattr(self.cmdline_args, 'config_file_path', None)
+        cmdline = getattr(self.cmdline_args, "config_file_path", None)
 
         if not is_blank(cmdline):
             if not os.path.isabs(cmdline):
@@ -106,9 +102,7 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
             return [cmdline]
 
         if self._IS_RUNNING_FROM_SOURCE:
-            return [
-                os.path.join(self._REPO_ROOT, "config", 'development.yaml')
-            ]
+            return [os.path.join(self._REPO_ROOT, "config", "development.yaml")]
         else:
             return [
                 resource_filename(
@@ -116,3 +110,26 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
                     "{{cookiecutter.project_slug}}/resources/development.yaml"
                 )
             ]
+
+    @property
+    def logging_json(self) -> dict:
+        retv = super().logging_json
+
+        # Don't log to syslog in development mode
+        for logger_name in retv.get('loggers', {}).keys():
+            if 'handlers' in retv['loggers'][logger_name]:
+                retv['loggers'][logger_name]['handlers'] = [
+                    handler_name
+                    for handler_name in retv['loggers'][logger_name]['handlers']
+                    if 'syslog' not in handler_name
+                ]
+
+        # Allow multi line logs in development mode
+        for formatter_config_key in retv.get('formatters', {}).keys():
+            if 'SingleLine' in retv['formatters'][formatter_config_key].get('()', ''):
+                retv['formatters'][formatter_config_key]['()'] = \
+                    retv['formatters'][formatter_config_key]['()'].replace(
+                        'SingleLine', ''
+                    )
+
+        return retv

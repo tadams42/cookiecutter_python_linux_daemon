@@ -14,9 +14,8 @@ def app(request):
     """
     Instance of test `Server`.
 
-    This fixture doesn't start server, but creating (at least one) instance
-    for test session is necessary so that app config is loaded and app
-    environment is initialized.
+    It doesn't ``startup`` server but it does ensure everything is initialized
+    as though instance was actually started.
     """
     app = Server("test")
 

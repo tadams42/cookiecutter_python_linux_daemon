@@ -2,9 +2,6 @@
     "version": 1,
     "disable_existing_loggers": false,
     "filters": {
-        "dynamic_context": {
-            "()": "seveno_pyutil.DynamicContextFilter"
-        },
         "standard_metadata": {
             "()": "seveno_pyutil.StandardMetadataFilter"
         }
@@ -12,17 +9,20 @@
     "formatters": {
         "filelog": {
             "()": "seveno_pyutil.SingleLineColoredFormatter",
-            "format": "%(isotime)s %(hostname)s {service_name} %(process)d [%(log_color)s%(levelname)s%(reset)s] [%(threadName)s]%(dynamic_context_values)s %(message)s"
+            "format": "%(isotime)s %(hostname)s {service_name}[%(process)d] [%(log_color)s%(levelname)s%(reset)s] %(message)s"
         },
         "syslog": {
             "()": "seveno_pyutil.SingleLineFormatter",
-            "format": "1 %(isotime)s %(hostname)s {service_name} %(process)d - - [%(levelname)s] [%(threadName)s]%(dynamic_context_values)s %(message)s"
+            "format": "[%(process)d] [%(isotime)s] [%(levelname)s] %(message)s"
         }
     },
     "handlers": {
+        "null": {
+            "class": "logging.NullHandler"
+        },
         "console": {
             "class": "logging.StreamHandler",
-            "filters": ["standard_metadata", "dynamic_context"],
+            "filters": ["standard_metadata"],
             "formatter": "filelog",
             "level": "DEBUG",
             "stream": "ext://sys.stdout"
@@ -30,15 +30,16 @@
         "file": {
             "class": "logging.handlers.WatchedFileHandler",
             "filename": null,
-            "filters": ["standard_metadata", "dynamic_context"],
+            "filters": ["standard_metadata"],
             "formatter": "filelog",
             "level": "DEBUG"
         },
         "syslog": {
+            ".": {"ident": "{service_name}"},
             "address": "/run/systemd/journal/syslog",
             "class": "logging.handlers.SysLogHandler",
             "facility": "local1",
-            "filters": ["standard_metadata", "dynamic_context"],
+            "filters": ["standard_metadata"],
             "formatter": "syslog",
             "level": "DEBUG"
         }

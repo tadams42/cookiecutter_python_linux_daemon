@@ -58,8 +58,8 @@ _MAIN_HELP_TEXT = """
     logging_config_path=click.style('--logging-config-path', fg='green'),
     log_file_path=click.style('--log-file-path', fg='green'),
 
-    etc_config_path=click.style('/etc/{{cookiecutter.project_slug}}/app.yaml', fg='red'),
-    xdg_config_path=click.style('$XDG_CONFIG_HOME/{{cookiecutter.project_slug}}/app.yaml', fg='red'),
+    etc_config_path=click.style('/etc/{{cookiecutter.project_slug}}/production.yaml', fg='red'),
+    xdg_config_path=click.style('$XDG_CONFIG_HOME/{{cookiecutter.project_slug}}/production.yaml', fg='red'),
     etc_log_config_path=click.style('/etc/{{cookiecutter.project_slug}}/logging_config.json', fg='red'),
     xdg_log_config_path=click.style('$XDG_CONFIG_HOME/{{cookiecutter.project_slug}}/logging_config.json', fg='red'),
 

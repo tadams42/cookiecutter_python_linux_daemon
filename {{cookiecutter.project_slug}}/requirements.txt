@@ -20,13 +20,15 @@ pickleshare==0.7.4        # via ipython
 prompt-toolkit==1.0.15    # via ipython
 ptyprocess==0.6.0         # via pexpect
 pygments==2.2.0           # via ipython, seveno-pyutil
+python-dateutil==2.7.5
 python-prctl==1.7
-pytz==2018.5              # via seveno-pyutil, tzlocal
+pytz==2018.5
 pyyaml==3.13
 seveno-pyutil==0.4.2
 simplegeneric==0.8.1      # via ipython
-six==1.11.0               # via prompt-toolkit, traitlets
+simplejson==3.16.0
+six==1.11.0               # via prompt-toolkit, python-dateutil, traitlets
 sqlparse==0.2.4           # via seveno-pyutil
 traitlets==4.3.2          # via ipython
-tzlocal==1.5.1            # via seveno-pyutil
+tzlocal==1.5.1
 wcwidth==0.1.7            # via prompt-toolkit

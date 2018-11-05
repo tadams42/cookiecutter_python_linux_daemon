@@ -12,6 +12,7 @@ import io
 import os
 import re
 import stat
+import sys
 from glob import glob
 from os.path import basename, dirname, join, splitext
 
@@ -82,7 +83,7 @@ setup(
     extras_require={
         'dev': [
             'pycodestyle',
-            'yapf',
+            'black' if sys.version_info >= (3,6,0) else 'yapf',
             'bumpversion',
             'isort',
             'check-manifest',

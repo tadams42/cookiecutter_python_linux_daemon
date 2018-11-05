@@ -35,19 +35,19 @@ class Server:
         """Starts main thread loop."""
         logger.info(
             "Starting up '%s' (v%s) application server...",
-            SETTINGS.instance_name, __version__
+            SETTINGS.instance_name,
+            __version__,
         )
 
         for signame in ('SIGINT', 'SIGTERM', 'SIGHUP', 'SIGQUIT'):
             signal.signal(
-                getattr(signal, signame),
-                lambda signum, frame: self.shutdown(signame)
+                getattr(signal, signame), lambda signum, frame: self.shutdown(signame)
             )
 
         self.before_startup()
 
         while True:
-            time.sleep(10)
+            time.sleep(1)
 
     def before_shutdown(self):
         """Executed before main thread loop is terminated."""
@@ -56,8 +56,7 @@ class Server:
     def shutdown(self, signame):
         """Terminates main thread loop."""
         logger.info(
-            "Initiating shut down of '%s' application server...",
-            SETTINGS.instance_name
+            "Initiating shut down of '%s' application server...", SETTINGS.instance_name
         )
 
         self.before_shutdown()
@@ -65,7 +64,7 @@ class Server:
         logger.info(
             "Application server '%s' was shut down. So Long, and Thanks for "
             "All the Fish!",
-            SETTINGS.instance_name
+            SETTINGS.instance_name,
         )
 
         sys.exit(0)

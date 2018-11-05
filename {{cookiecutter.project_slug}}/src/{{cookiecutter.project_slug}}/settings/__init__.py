@@ -6,8 +6,7 @@ from objproxies import CallbackProxy
 from seveno_pyutil import silent_remove
 
 from .development_config_loader import DevelopmentConfigLoader
-from .external_config_loader import (ExternalConfigLoader,
-                                     ImproperlyConfiguredError)
+from .external_config_loader import ExternalConfigLoader, ImproperlyConfiguredError
 from .production_config_loader import ProductionConfigLoader
 from .test_config_loader import TestConfigLoader
 
