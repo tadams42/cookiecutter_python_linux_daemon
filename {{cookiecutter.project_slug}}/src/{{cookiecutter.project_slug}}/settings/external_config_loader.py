@@ -105,6 +105,9 @@ class ExternalConfigLoader(ABC):
     def __getitem__(self, item):
         return self.app_config[item]
 
+    def __repr__(self):
+        return json.dumps(self._pretty_dict, indent="  ", sort_keys=True)
+
     @property
     def instance_name(self) -> str:
         """Instance name is visible in logs and top/htop as process name.
@@ -262,19 +265,7 @@ class ExternalConfigLoader(ABC):
         logger.debug(
             "Initialized and resolved config for %s: %s",
             self.instance_name,
-            json.dumps(
-                {
-                    "instance_name": self.instance_name,
-                    "instance_uuid": str(self.APPLICATION_INSTANCE_UUID),
-                    "config_files": self.config_file_abspaths,
-                    "app_config": self.app_config,
-                    "logging_json": self.logging_json,
-                    "cmdline_args": (
-                        self.cmdline_args._asdict() if self.cmdline_args else None
-                    ),
-                    "tmp_dir": self.instance_tmp_dir_path,
-                }
-            ),
+            json.dumps(self._pretty_dict),
         )
         if self._is_filelog_enabled:
             logger.debug("Logging to: %s", self.filelog_abspath)
@@ -287,3 +278,31 @@ class ExternalConfigLoader(ABC):
             "file" in logger["handlers"]
             for logger in self.logging_json["loggers"].values()
         )
+
+    @property
+    def _pretty_dict(self):
+        return {
+            k: v
+            for k, v in (
+                list(vars(self).items())
+                + [
+                    ("APPLICATION_NAME", self.APPLICATION_NAME),
+                    ("APPLICATION_INSTANCE_UUID", str(self.APPLICATION_INSTANCE_UUID)),
+                    ("XDG_CONFIG_HOME", self.XDG_CONFIG_HOME),
+                    ("XDG_DATA_HOME", self.XDG_DATA_HOME),
+                    ("DEFAULT_TEMP_DIR", self.DEFAULT_TEMP_DIR),
+                    ("instance_name", self.instance_name),
+                    ("is_dry_run", self.is_dry_run),
+                    ("instance_tmp_dir_path", self.instance_tmp_dir_path),
+                    ("config_file_abspaths", self.config_file_abspaths),
+                    ("filelog_abspath", self.filelog_abspath),
+                    ("logging_config_abspaths", self.logging_config_abspaths),
+                    ("logging_json", self.logging_json),
+                    (
+                        "cmdline_args",
+                        self.cmdline_args._asdict() if self.cmdline_args else None,
+                    ),
+                ]
+            )
+            if not k.startswith("_")
+        }
