@@ -35,7 +35,7 @@
             "level": "DEBUG"
         },
         "syslog": {
-            ".": {"ident": "{service_name}"},
+            ".": { "ident": "{service_name}" },
             "address": "/run/systemd/journal/syslog",
             "class": "logging.handlers.SysLogHandler",
             "facility": "local1",
@@ -44,8 +44,12 @@
             "level": "DEBUG"
         }
     },
+    "root": {
+        "handlers": ["console", "file", "syslog"],
+        "level": "DEBUG"
+    },
     "loggers": {
-        "{{cookiecutter.project_slug}}": {"handlers": ["file", "syslog"], "level": "DEBUG"},
-        "seveno_pyutil": {"handlers": ["file", "syslog"], "level": "INFO"}
+        "{{cookiecutter.project_slug}}": {"handlers": ["file", "syslog", "console"], "level": "DEBUG"},
+        "seveno_pyutil": {"handlers": ["file", "syslog", "console"], "level": "INFO"}
     }
 }

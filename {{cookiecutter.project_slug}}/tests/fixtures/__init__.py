@@ -14,8 +14,8 @@ def app(request):
     """
     Instance of test `Server`.
 
-    It doesn't ``startup`` server but it does ensure everything is initialized
-    as though instance was actually started.
+    It doesn't ``startup`` server but it does ensure everything is initialized as
+    though instance was actually started.
     """
     app = Server("test")
 

@@ -9,8 +9,7 @@ from typing import List, NamedTuple
 
 import yaml
 from pkg_resources import Requirement, resource_filename
-from seveno_pyutil import (abspath_if_relative, current_user_home, is_blank,
-                           silent_create_dirs)
+from seveno_pyutil import current_user_home, silent_create_dirs
 
 try:
     import simplejson as json
@@ -167,13 +166,10 @@ class ExternalConfigLoader(ABC):
         if not self._logging_json:
             self._load_logging_config()
 
-            if self._is_filelog_enabled:
+            if "file" in self._logging_json["handlers"]:
                 self._logging_json["handlers"]["file"][
                     "filename"
                 ] = self.filelog_abspath
-            else:
-                if "file" in self._logging_json["handlers"]:
-                    del (self._logging_json["handlers"]["file"])
 
             if "syslog" in self._logging_json["handlers"]:
                 self._logging_json["handlers"]["syslog"]["."] = {
@@ -201,6 +197,9 @@ class ExternalConfigLoader(ABC):
                             for handler in logger_cfg["handlers"]
                             if handler != "syslog"
                         ]
+
+            if not self._is_filelog_enabled:
+                del self._logging_json["handlers"]["file"]
 
         return self._logging_json
 
@@ -274,9 +273,15 @@ class ExternalConfigLoader(ABC):
 
     @property
     def _is_filelog_enabled(self) -> bool:
-        return "file" in self.logging_json["handlers"] and any(
-            "file" in logger["handlers"]
-            for logger in self.logging_json["loggers"].values()
+        return "file" in self.logging_json["handlers"] and (
+            any(
+                "file" in logger["handlers"]
+                for logger in self.logging_json["loggers"].values()
+            )
+            or (
+                "root" in self.logging_json
+                and "file" in self.logging_json["root"]["handlers"]
+            )
         )
 
     @property

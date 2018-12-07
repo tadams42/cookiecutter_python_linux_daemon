@@ -83,11 +83,12 @@ setup(
     extras_require={
         'dev': [
             'pycodestyle',
-            'black' if sys.version_info >= (3,6,0) else 'yapf',
+            'black' if sys.version_info >= (3, 6, 0) else 'yapf',
             'bumpversion',
             'isort',
             'check-manifest',
             'pylint',
+            'flake8',
 
             # Docs and viewers
             'sphinx',
@@ -96,7 +97,6 @@ setup(
 
             # py.test stuff
             'pytest >= 3.0.0',
-            'pytest-sugar',
             'pytest-spec',
             'pytest-mock',
             'factory-boy',

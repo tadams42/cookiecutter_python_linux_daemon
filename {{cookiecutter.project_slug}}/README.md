@@ -48,7 +48,7 @@ py.test
 Or with spec output:
 
 ~~~sh
-py.test -p no:sugar --spec
+py.test --spec
 ~~~
 
 Or against multiple Python versions:
@@ -83,6 +83,13 @@ git commit "Added dependency Foo..."
 3. Update version strings and commit:
 
     ~~~sh
-    bumpversion --dry-run patch
-    bumpversion patch --commit
+    # For dev builds:
+    bumpversion build --allow-dirty
+
+    # or for hotfixes:
+    bumpversion patch --allow-dirty
+
+    # or for releases:
+    bumpversion minor --allow-dirty
+    bumpversion major --allow-dirty
     ~~~
