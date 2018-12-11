@@ -9,5 +9,5 @@ graft src/{{cookiecutter.project_slug}}/resources
 include README.md requirements.txt
 
 exclude tox.ini requirements.in requirements_dev.txt CHANGELOG.md INSTALL.md
-exclude VERSION TODO.md bin/docker-compose.yml
+exclude VERSION TODO.md docker-compose.yml
 global-exclude *.py[cod] __pycache__ *.so *.dylib .directory .ipynb_checkpoints/*

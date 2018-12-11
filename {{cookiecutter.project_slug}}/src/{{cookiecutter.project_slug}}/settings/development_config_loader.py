@@ -84,7 +84,7 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
         else:
             return [
                 resource_filename(
-                    Requirement("{{cookiecutter.project_slug}}"),
+                    Requirement.parse("{{cookiecutter.project_slug}}"),
                     "{{cookiecutter.project_slug}}/resources/logging_config.json",
                 )
             ]
@@ -107,29 +107,6 @@ class DevelopmentConfigLoader(ExternalConfigLoader):
             return [
                 resource_filename(
                     Requirement.parse("{{cookiecutter.project_slug}}"),
-                    "{{cookiecutter.project_slug}}/resources/development.yaml"
+                    "{{cookiecutter.project_slug}}/resources/development.yaml",
                 )
             ]
-
-    @property
-    def logging_json(self) -> dict:
-        retv = super().logging_json
-
-        # Don't log to syslog in development mode
-        for logger_name in retv.get('loggers', {}).keys():
-            if 'handlers' in retv['loggers'][logger_name]:
-                retv['loggers'][logger_name]['handlers'] = [
-                    handler_name
-                    for handler_name in retv['loggers'][logger_name]['handlers']
-                    if 'syslog' not in handler_name
-                ]
-
-        # Allow multi line logs in development mode
-        for formatter_config_key in retv.get('formatters', {}).keys():
-            if 'SingleLine' in retv['formatters'][formatter_config_key].get('()', ''):
-                retv['formatters'][formatter_config_key]['()'] = \
-                    retv['formatters'][formatter_config_key]['()'].replace(
-                        'SingleLine', ''
-                    )
-
-        return retv

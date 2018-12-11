@@ -181,8 +181,12 @@ class DescribeProductionConfigLoader:
         cfg._IS_RUNNING_FROM_SOURCE = True
         assert cfg.config_file_abspaths == [
             "/etc/{{cookiecutter.project_slug}}/production.yaml",
+            "/etc/{{cookiecutter.project_slug}}/production.yml",
+            "/etc/{{cookiecutter.project_slug}}/app.yaml",
             "/etc/{{cookiecutter.project_slug}}/app.yml",
             os.path.join(cfg.XDG_CONFIG_HOME, "production.yaml"),
+            os.path.join(cfg.XDG_CONFIG_HOME, "production.yml"),
+            os.path.join(cfg.XDG_CONFIG_HOME, "app.yaml"),
             os.path.join(cfg.XDG_CONFIG_HOME, "app.yml"),
         ]
         assert cfg.filelog_abspath == os.path.join(cfg.XDG_DATA_HOME, "production.log")
@@ -195,8 +199,12 @@ class DescribeProductionConfigLoader:
         cfg._logging_json = {"handlers": {"file": {"filename": None}}}
         assert cfg.config_file_abspaths == [
             "/etc/{{cookiecutter.project_slug}}/production.yaml",
+            "/etc/{{cookiecutter.project_slug}}/production.yml",
+            "/etc/{{cookiecutter.project_slug}}/app.yaml",
             "/etc/{{cookiecutter.project_slug}}/app.yml",
             os.path.join(cfg.XDG_CONFIG_HOME, "production.yaml"),
+            os.path.join(cfg.XDG_CONFIG_HOME, "production.yml"),
+            os.path.join(cfg.XDG_CONFIG_HOME, "app.yaml"),
             os.path.join(cfg.XDG_CONFIG_HOME, "app.yml"),
         ]
         assert cfg.filelog_abspath == os.path.join(cfg.XDG_DATA_HOME, "production.log")

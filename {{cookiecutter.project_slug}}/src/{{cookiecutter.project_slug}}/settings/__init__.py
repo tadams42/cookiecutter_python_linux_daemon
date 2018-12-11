@@ -12,9 +12,9 @@ from .test_config_loader import TestConfigLoader
 
 #: Available app runtime environment types.
 ENVIRONMENTS = {
-    'development': DevelopmentConfigLoader,
-    'test': TestConfigLoader,
-    'production': ProductionConfigLoader
+    "development": DevelopmentConfigLoader,
+    "test": TestConfigLoader,
+    "production": ProductionConfigLoader,
 }
 
 # Global config object instance

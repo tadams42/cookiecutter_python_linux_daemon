@@ -5,11 +5,12 @@
 1. System dependencies
 
     ~~~sh
-    sudo apt install python3-dev python3-venv libcap-dev
+    sudo apt install python3-dev python3-venv libcap-dev redis-tools
     ~~~
 
-2. External services dependencies
+2. External services
 
+    * Redis
     * ...
 
 ## Development machines
@@ -17,21 +18,16 @@
 ### Install
 
 ~~~sh
-python3 -mvenv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install --editable .[dev]
 ~~~
 
-For any sensible development, you'll also need a bunch of services running. Simplest way to make that happen is to use Docker:
-
-~~~sh
-cd bin
-docker-compose up -d
-~~~
-
 ### Configuration and logs
 
-Config files are:
+Location of configuration files depends on app startup mode (environment).
+
+For `development` and `test` mode, config files are:
 
 ~~~sh
 config/development.yaml
@@ -48,9 +44,30 @@ log/test.log
 
 ### Run
 
+For any sensible development, you'll also need a bunch of services running. Simplest way to make that happen is to use provided docker-compose config:
+
 ~~~sh
+# Starts services we depend on (ie. database server, Redis, etc...)
+docker-compose --project-name {{cookiecutter.project_slug}} up --detach
+~~~
+
+This will start:
+
+* Redis on `localhost:6379`
+
+Now we can start application:
+
+~~~sh
+# Starts app server or shell in development mode of operation
+source .venv/bin/activate
 {{cookiecutter.project_slug}} runserver
 {{cookiecutter.project_slug}} shell
+
+# Starts app server or shell in other mode of operation
+{{cookiecutter.project_slug}} -e test runserver
+{{cookiecutter.project_slug}} -e production shell
+
+# Strongly advised to run this one too, it shows useful info
 {{cookiecutter.project_slug}} --help
 ~~~
 
@@ -73,7 +90,7 @@ application into virtual environment:
 ~~~sh
 git clone https://.../{{cookiecutter.project_slug}}
 cd {{cookiecutter.project_slug}}
-python3 -mvenv .venv
+python3 -m venv .venv
 .venv/bin/python setup.py develop
 ~~~
 
@@ -82,24 +99,24 @@ python3 -mvenv .venv
 Since our app is `setuptools` enabled it is also possible to build `sdist` package from it and place it into some kind of `pip` index. After that, installing app is equal to installing any other `pip` package.
 
 ~~~sh
-python3 -mvenv .venv
+python3 -m venv .venv
 .venv/bin/pip --find-index https://.... install --update {{cookiecutter.project_slug}}
 ~~~
 
-Note that when installed like this, app no longer has access to `log/` and `config/` directories. Instead, app behaves like any decent Linux software by following `$$XDG_DATA_HOME` and `$XDG_CONFIG_HOME` from [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+Note that when installed like this, app no longer has access to `log/` and `config/` directories. Instead, app behaves like any decent Linux software by following `$XDG_DATA_HOME` and `$XDG_CONFIG_HOME` from [XDG Base Directory Specification]
 
 ### Configuration and logs
 
 In production mode, app expects and loads config files in following locations:
 
-* `/etc/{{cookiecutter.project_slug}}/production.yaml`
-* `$HOME/.config/{{cookiecutter.project_slug}}/production.yaml`
+* `/etc/{{cookiecutter.project_slug}}/app.yaml`
+* `$XDG_CONFIG_HOME/{{cookiecutter.project_slug}}/app.yaml`
 * `{setup.py dir}/config/production.yaml`
 
 and logs to one of following locations:
 
 * `{setup.py dir}/log/production.log` when app is started from within the repo
-* `~/.local/share/{{cookiecutter.project_slug}}/log/production.log` otherwise
+* `$XDG_DATA_HOME/{{cookiecutter.project_slug}}/log/production.log` otherwise
 
 It is possible to override these with command line parameters, for details see:
 
@@ -109,13 +126,14 @@ It is possible to override these with command line parameters, for details see:
 
 ### Run
 
+Running development app shell or development app server with production config can be useful when trying to diagnose production problems:
+
 ~~~sh
 .venv/bin/{{cookiecutter.project_slug}} runserver --environment production
 .venv/bin/{{cookiecutter.project_slug}} shell --environment production
-.venv/bin/{{cookiecutter.project_slug}} --help
 ~~~
 
-The simplest way to demonize application is to use `supervisord` with following configuration:
+The simplest way to demonize application is to use [supervisord] with following configuration:
 
 ~~~ini
 [{{cookiecutter.project_slug}}]
@@ -123,3 +141,8 @@ user=some_user
 directory=/home/some_user/{{cookiecutter.project_slug}}
 command=.venv/bin/{{cookiecutter.project_slug}} runserver --environment production
 ~~~
+
+[supervisord]: http://www.supervisord.org
+[systemd]: https://github.com/systemd/systemd
+[XDG Base Directory Specification]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+[Redis]: https://redis.io

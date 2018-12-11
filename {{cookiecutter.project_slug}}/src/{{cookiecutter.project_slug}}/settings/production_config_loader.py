@@ -18,8 +18,8 @@ class ProductionConfigLoader(ExternalConfigLoader):
 
     - application config file paths
         - value of ``--config-file-path`` if provided
-        - else ``[/etc/{{cookiecutter.project_slug}}/production.yaml,
-          $XDG_CONFIG_HOME/{{cookiecutter.project_slug}}/production.yaml]``
+        - else ``[/etc/{{cookiecutter.project_slug}}/app.yaml,
+          $XDG_CONFIG_HOME/{{cookiecutter.project_slug}}/app.yaml]``
 
     - logging config JSON file path
         - value of ``--logging-config-path`` if provided
@@ -102,7 +102,11 @@ class ProductionConfigLoader(ExternalConfigLoader):
         else:
             return [
                 "/etc/{{cookiecutter.project_slug}}/production.yaml",
+                "/etc/{{cookiecutter.project_slug}}/production.yml",
+                "/etc/{{cookiecutter.project_slug}}/app.yaml",
                 "/etc/{{cookiecutter.project_slug}}/app.yml",
                 os.path.join(self.XDG_CONFIG_HOME, "production.yaml"),
+                os.path.join(self.XDG_CONFIG_HOME, "production.yml"),
+                os.path.join(self.XDG_CONFIG_HOME, "app.yaml"),
                 os.path.join(self.XDG_CONFIG_HOME, "app.yml"),
             ]

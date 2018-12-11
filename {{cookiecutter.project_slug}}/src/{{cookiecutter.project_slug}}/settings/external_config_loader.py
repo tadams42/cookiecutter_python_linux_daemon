@@ -166,15 +166,21 @@ class ExternalConfigLoader(ABC):
         if not self._logging_json:
             self._load_logging_config()
 
-            if "file" in self._logging_json["handlers"]:
-                self._logging_json["handlers"]["file"][
-                    "filename"
-                ] = self.filelog_abspath
-
-            if "syslog" in self._logging_json["handlers"]:
-                self._logging_json["handlers"]["syslog"]["."] = {
-                    "ident": self.instance_name
+            if not self._is_filelog_enabled:
+                self._logging_json["handlers"] = {
+                    handler_name: handler_config
+                    for handler_name, handler_config in self._logging_json[
+                        "handlers"
+                    ].items()
+                    if "file" not in handler_name
                 }
+
+            for handler_name, handler_config in self._logging_json["handlers"].items():
+                if "file" in handler_name:
+                    handler_config["filename"] = self.filelog_abspath
+
+                if "syslog" in handler_name:
+                    handler_config["."] = {"ident": self.instance_name}
 
             for formatter in self._logging_json["formatters"].values():
                 formatter["format"] = formatter["format"].format(
@@ -189,17 +195,16 @@ class ExternalConfigLoader(ABC):
                     else:
                         del formatter["()"]
 
-            for logger_cfg in self._logging_json["loggers"].values():
-                if self._FORCE_DISABLE_SYSLOG:
-                    if "handlers" in logger_cfg:
-                        logger_cfg["handlers"] = [
-                            handler
-                            for handler in logger_cfg["handlers"]
-                            if handler != "syslog"
-                        ]
-
-            if not self._is_filelog_enabled:
-                del self._logging_json["handlers"]["file"]
+            for logger_cfg in (
+                list(self._logging_json["loggers"].values())
+                + ([self._logging_json["root"]] if "root" in self._logging_json else [])
+            ):
+                if self._FORCE_DISABLE_SYSLOG and "handlers" in logger_cfg:
+                    logger_cfg["handlers"] = [
+                        handler_name
+                        for handler_name in logger_cfg["handlers"]
+                        if "syslog" not in handler_name
+                    ]
 
         return self._logging_json
 
@@ -217,7 +222,7 @@ class ExternalConfigLoader(ABC):
         if not self._logging_json:
             with open(
                 resource_filename(
-                    Requirement("{{cookiecutter.project_slug}}"),
+                    Requirement.parse("{{cookiecutter.project_slug}}"),
                     "{{cookiecutter.project_slug}}/resources/logging_config.json",
                 ),
                 "r",
@@ -273,15 +278,13 @@ class ExternalConfigLoader(ABC):
 
     @property
     def _is_filelog_enabled(self) -> bool:
-        return "file" in self.logging_json["handlers"] and (
-            any(
-                "file" in logger["handlers"]
-                for logger in self.logging_json["loggers"].values()
+        return any(
+            "file" in handler_name
+            for logger in (
+                list(self.logging_json["loggers"].values())
+                + ([self.logging_json["root"]] if "root" in self.logging_json else [])
             )
-            or (
-                "root" in self.logging_json
-                and "file" in self.logging_json["root"]["handlers"]
-            )
+            for handler_name in logger["handlers"]
         )
 
     @property

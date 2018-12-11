@@ -4,12 +4,9 @@
 
 ## Install
 
-For development machine run:
-
 ~~~sh
-sudo apt install python3-dev python3-venv libcap-dev
-
-python3 -mvenv .venv
+sudo apt install python3-dev python3-venv libcap-dev redis-tools
+python3 -m venv .venv
 source .venv/bin/activate
 pip install  --editable .[dev]
 ~~~
@@ -21,11 +18,19 @@ For the rest of glory details see [INSTALL.md](INSTALL.md)
 Running app shell and server:
 
 ~~~sh
+# Starts services we depend on (ie. database server, Redis, etc...)
+docker-compose --project-name {{cookiecutter.project_slug}} up --detach
+
+# Starts app server or shell in development mode of operation
 source .venv/bin/activate
 {{cookiecutter.project_slug}} runserver
 {{cookiecutter.project_slug}} shell
+
+# Strongly advised to run this one too, it shows useful info
 {{cookiecutter.project_slug}} --help
 ~~~
+
+For the rest of glory details see [INSTALL.md](INSTALL.md)
 
 ## Documentation
 
@@ -66,7 +71,7 @@ Add abstract dependencies to `requirements.in` and then:
 pip install -U pip-tools
 pip-compile requirements.in
 git add requirements.*
-git commit "Added dependency Foo..."
+git commit "Added dependences: Foo, Bar, Baz..."
 ~~~
 
 ## Releasing the thing checklist

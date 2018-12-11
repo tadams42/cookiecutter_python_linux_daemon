@@ -14,11 +14,12 @@ objproxies
 
 # YAML reader/writer
 pyyaml
-
-# improved JSON
+# Fast JSON implementation that is compatible with Python’s json module. It is
+# preferred for JSON operations if it is installed.
+# Use it like this: import simplejson as json
 simplejson
 
-# cmdline interface
+# commandline interface
 click
 click-help-colors
 
@@ -27,3 +28,6 @@ pytz
 python-dateutil
 tzlocal
 
+# Redis and native Redis driver
+# redis > 3.0.0
+# hiredis

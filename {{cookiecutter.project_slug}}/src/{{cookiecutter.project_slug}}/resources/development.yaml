@@ -1,7 +1,9 @@
 ---
-# Optional, path.
-# Top tmp dir for application. If not provided, app will get one from OS. Since
-# app will be using this for downloading files it is processing, make sure this
-# one has a fair amount of space available. App will try to maintain it clean,
-# and will make sure it is deleted if app is is shut down cleanly.
-tmp_dir_path:
+# see production.example.yaml for explanations of individual options
+tmp_dir_path: ""
+
+redis:
+  client:
+    host: 127.0.0.1
+    port: 6379
+    db: 9
